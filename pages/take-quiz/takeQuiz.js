@@ -6,24 +6,56 @@ const quizId = urlParams.get('quiz')
 const selectedQuiz = sampleQuizData.find(quiz => quiz.id === parseInt(quizId))
 let activeQuestion = 1
 
-const userSelectedAnswers = []
+const userSelectedAnswers = selectedQuiz.questions.map(question => ({
+  answer: null,
+  questionId: question.id,
+}))
 
 const nextButton = document.createElement('button')
+const quizQuestionContainer = document.querySelector('.quiz-question')
 
-function handleAnswer(answer, question) {
-  const previouslyAnsweredQuestionId = userSelectedAnswers.findIndex(selectedAnswer => question.id === selectedAnswer.questionId)
-
-  if (previouslyAnsweredQuestionId !== -1) {
-    userSelectedAnswers.splice(previouslyAnsweredQuestionId, 1, { ...answer, questionId: question.id })
+function handleAnswer(answer) {
+  if (answer.id === userSelectedAnswers[activeQuestion - 1].answer?.id && userSelectedAnswers[activeQuestion - 1].questionId === activeQuestion) {
+    userSelectedAnswers[activeQuestion - 1].answer = null
+    nextButton.disabled = true
   } else {
-    userSelectedAnswers.push({ ...answer, questionId: question.id })
+    userSelectedAnswers[activeQuestion - 1].answer = answer
+    nextButton.disabled = false
   }
 
-  nextButton.disabled = false
+  const answerButtons = document.getElementsByClassName('answer-button')
+
+  for (let i = 0; i < answerButtons.length; i++) {
+    if (answer.id === i + 1 && !answerButtons[i].classList.contains('answer-selected')) {
+      answerButtons[i].classList.add('answer-selected')
+    } else if (answerButtons[i].classList.contains('answer-selected')) {
+      answerButtons[i].classList.remove('answer-selected')
+    }
+  }
 }
 
 function submitQuiz() {
   // TODO: Build this out in the next branch
+}
+
+function setupAnswerButtons(activeQuestionDetails) {
+  activeQuestionDetails.answers.forEach((answer) => {
+    const answerButton = document.createElement('button')
+
+    answerButton.className = 'answer-button'
+
+    answerButton.innerText = answer.text
+
+    if (answer.id === userSelectedAnswers[activeQuestion - 1].answer?.id) {
+      answerButton.classList.add('answer-selected')
+    }
+
+    answerButton.addEventListener('click', () => {
+      handleAnswer(answer, activeQuestionDetails)
+    })
+
+    quizQuestionContainer.appendChild(answerButton)
+  })
 }
 
 function setupNavButtons() {
@@ -96,32 +128,15 @@ function setupNavButtons() {
 function setupQuestionDetails() {
   const quizQuestions = selectedQuiz.questions
   const activeQuestionDetails = quizQuestions.find(question => question.id === activeQuestion)
-
-  nextButton.disabled = true
-
-  const quizQuestionContainer = document.querySelector('.quiz-question')
+    
+  nextButton.disabled = userSelectedAnswers[activeQuestion - 1].answer?.id ? false : true
 
   quizQuestionContainer.innerHTML = `
     <p>Question ${activeQuestion} / ${selectedQuiz.questions.length}</p>
     <h3>${activeQuestionDetails.text}</h3>
   `
 
-  activeQuestionDetails.answers.forEach(answer => {
-    const answerButton = document.createElement('button')
-
-    answerButton.className = 'answer-button'
-
-    answerButton.innerText = answer.text
-
-    answerButton.addEventListener('click', () => {
-      answerButton.style.backgroundColor = '#4338ca'
-      answerButton.style.color = '#eef2ff'
-
-      handleAnswer(answer, activeQuestionDetails)
-    })
-
-    quizQuestionContainer.appendChild(answerButton)
-  })
+  setupAnswerButtons(activeQuestionDetails)
 }
 
 function setupTakeQuizDisplay() {

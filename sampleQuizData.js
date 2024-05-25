@@ -7,10 +7,10 @@ export const sampleQuizData = [
       {
         id: 1,
         answers: [
-          { correct: false, text: "Sample Answer #1" },
-          { correct: false, text: "Sample Answer #2" },
-          { correct: true, text: "Sample Answer #3" },
-          { correct: false, text: "Sample Answer #4" },
+          { id: 1, correct: false, text: "Sample Answer #1" },
+          { id: 2, correct: false, text: "Sample Answer #2" },
+          { id: 3, correct: true, text: "Sample Answer #3" },
+          { id: 4, correct: false, text: "Sample Answer #4" },
         ],
         text: "Sample Question #1",
         questionType: "multiple-choice-select-one",
@@ -18,21 +18,21 @@ export const sampleQuizData = [
       {
         id: 2,
         answers: [
-          { correct: false, text: "Sample Answer #1" },
-          { correct: false, text: "Sample Answer #2" },
-          { correct: true, text: "Sample Answer #3" },
-          { correct: false, text: "Sample Answer #4" },
+          { id: 1, correct: false, text: "Sample Answer #1" },
+          { id: 2, correct: false, text: "Sample Answer #2" },
+          { id: 3, correct: true, text: "Sample Answer #3" },
+          { id: 4, correct: false, text: "Sample Answer #4" },
         ],
         text: "Sample Question #2",
-        questionType: "multiple-choice-select-multiple",
+        questionType: "multiple-choice-select-one",
       },
       {
         id: 3,
         answers: [
-          { correct: false, text: "Sample Answer #1" },
-          { correct: false, text: "Sample Answer #2" },
-          { correct: true, text: "Sample Answer #3" },
-          { correct: false, text: "Sample Answer #4" },
+          { id: 1, correct: false, text: "Sample Answer #1" },
+          { id: 2, correct: false, text: "Sample Answer #2" },
+          { id: 3, correct: true, text: "Sample Answer #3" },
+          { id: 4, correct: false, text: "Sample Answer #4" },
         ],
         text: "Sample Question #3",
         questionType: "multiple-choice-select-one",
@@ -40,10 +40,10 @@ export const sampleQuizData = [
       {
         id: 4,
         answers: [
-          { correct: false, text: "Sample Answer #1" },
-          { correct: false, text: "Sample Answer #2" },
-          { correct: true, text: "Sample Answer #3" },
-          { correct: false, text: "Sample Answer #4" },
+          { id: 1, correct: false, text: "Sample Answer #1" },
+          { id: 2, correct: false, text: "Sample Answer #2" },
+          { id: 3, correct: true, text: "Sample Answer #3" },
+          { id: 4, correct: false, text: "Sample Answer #4" },
         ],
         text: "Sample Question #4",
         questionType: "multiple-choice-select-one",
@@ -51,13 +51,13 @@ export const sampleQuizData = [
       {
         id: 5,
         answers: [
-          { correct: false, text: "Sample Answer #1" },
-          { correct: false, text: "Sample Answer #2" },
-          { correct: true, text: "Sample Answer #3" },
-          { correct: false, text: "Sample Answer #4" },
+          { id: 1, correct: false, text: "Sample Answer #1" },
+          { id: 2, correct: false, text: "Sample Answer #2" },
+          { id: 3, correct: true, text: "Sample Answer #3" },
+          { id: 4, correct: false, text: "Sample Answer #4" },
         ],
         text: "Sample Question #5",
-        questionType: "multiple-choice-select-multiple",
+        questionType: "multiple-choice-select-one",
       }
     ]
   }

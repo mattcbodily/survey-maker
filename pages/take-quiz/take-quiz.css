@@ -16,6 +16,11 @@ main {
   height: 48px;
 }
 
+.answer-selected {
+  background-color: var(--accent-background-color);
+  color: var(--accent-text-color);
+}
+
 .nav-button-container {
   display: flex;
   justify-content: space-between;

@@ -5,6 +5,7 @@ export const sampleQuizData = [
     description: "This quiz provides sample quiz data for development purposes",
     questions: [
       {
+        id: 1,
         answers: [
           { correct: false, text: "Sample Answer #1" },
           { correct: false, text: "Sample Answer #2" },
@@ -12,9 +13,10 @@ export const sampleQuizData = [
           { correct: false, text: "Sample Answer #4" },
         ],
         text: "Sample Question #1",
-        type: "multiple-choice-select-one",
+        questionType: "multiple-choice-select-one",
       },
       {
+        id: 2,
         answers: [
           { correct: false, text: "Sample Answer #1" },
           { correct: false, text: "Sample Answer #2" },
@@ -22,9 +24,10 @@ export const sampleQuizData = [
           { correct: false, text: "Sample Answer #4" },
         ],
         text: "Sample Question #2",
-        type: "multiple-choice-select-multiple",
+        questionType: "multiple-choice-select-multiple",
       },
       {
+        id: 3,
         answers: [
           { correct: false, text: "Sample Answer #1" },
           { correct: false, text: "Sample Answer #2" },
@@ -32,9 +35,10 @@ export const sampleQuizData = [
           { correct: false, text: "Sample Answer #4" },
         ],
         text: "Sample Question #3",
-        type: "multiple-choice-select-one",
+        questionType: "multiple-choice-select-one",
       },
       {
+        id: 4,
         answers: [
           { correct: false, text: "Sample Answer #1" },
           { correct: false, text: "Sample Answer #2" },
@@ -42,9 +46,10 @@ export const sampleQuizData = [
           { correct: false, text: "Sample Answer #4" },
         ],
         text: "Sample Question #4",
-        type: "multiple-choice-select-one",
+        questionType: "multiple-choice-select-one",
       },
       {
+        id: 5,
         answers: [
           { correct: false, text: "Sample Answer #1" },
           { correct: false, text: "Sample Answer #2" },
@@ -52,7 +57,7 @@ export const sampleQuizData = [
           { correct: false, text: "Sample Answer #4" },
         ],
         text: "Sample Question #5",
-        type: "multiple-choice-select-multiple",
+        questionType: "multiple-choice-select-multiple",
       }
     ]
   }

@@ -8,6 +8,8 @@ let activeQuestion = 1
 
 const userSelectedAnswers = []
 
+const nextButton = document.createElement('button')
+
 function handleAnswer(answer, question) {
   const previouslyAnsweredQuestionId = userSelectedAnswers.findIndex(selectedAnswer => question.id === selectedAnswer.questionId)
 
@@ -16,6 +18,8 @@ function handleAnswer(answer, question) {
   } else {
     userSelectedAnswers.push({ ...answer, questionId: question.id })
   }
+
+  nextButton.disabled = false
 }
 
 function submitQuiz() {
@@ -26,7 +30,6 @@ function setupNavButtons() {
   const navButtonContainer = document.querySelector('.nav-button-container')
 
   const previousButton = document.createElement('button')
-  const nextButton = document.createElement('button')
 
   previousButton.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="22" height="22" stroke-width="1.5" stroke="currentColor">
@@ -93,6 +96,8 @@ function setupNavButtons() {
 function setupQuestionDetails() {
   const quizQuestions = selectedQuiz.questions
   const activeQuestionDetails = quizQuestions.find(question => question.id === activeQuestion)
+
+  nextButton.disabled = true
 
   const quizQuestionContainer = document.querySelector('.quiz-question')
 

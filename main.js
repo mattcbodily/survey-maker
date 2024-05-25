@@ -1,24 +1,23 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import { sampleQuizData } from './sampleQuizData.js'
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+function displayQuizList() {
+  const quizListElement = document.querySelector('.quiz-list')
 
-setupCounter(document.querySelector('#counter'))
+  sampleQuizData.forEach(quiz => {
+    const quizCardElement = document.createElement('div')
+
+    quizCardElement.className = 'quiz-card'
+
+    quizCardElement.innerHTML = `
+      <h3 class="bold">${quiz.title}</h3>
+      <p>${quiz.description}</p>
+      <a href="/pages/take-quiz/?quiz=${quiz.id}">
+        <button class="primary-button">Take quiz</button>
+      </a>
+    `
+
+    quizListElement.appendChild(quizCardElement)
+  })
+}
+
+displayQuizList()

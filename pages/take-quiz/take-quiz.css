@@ -1,0 +1,40 @@
+main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-medium);
+}
+
+.quiz-question {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-small);
+}
+
+.answer-button {
+  background-color: var(--primary-background-color);
+  border: 2px solid var(--primary-text-color);
+  height: 48px;
+}
+
+.answer-selected {
+  background-color: var(--accent-background-color);
+  color: var(--accent-text-color);
+}
+
+.nav-button-container {
+  display: flex;
+  justify-content: space-between;
+
+  & button {
+    background-color: var(--accent-background-color);
+    color: var(--accent-text-color);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+    height: 48px;
+  }
+
+  & button[disabled] {
+    background-color: rgba(0, 0, 0, .1);
+  }
+}

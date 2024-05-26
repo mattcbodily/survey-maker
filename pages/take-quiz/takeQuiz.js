@@ -35,7 +35,9 @@ function handleAnswer(answer) {
 }
 
 function submitQuiz() {
-  // TODO: Build this out in the next branch
+  localStorage.setItem('quizResults', JSON.stringify(userSelectedAnswers))
+
+  window.location.href = `/pages/quiz-results/?quiz=${quizId}`
 }
 
 function setupAnswerButtons(activeQuestionDetails) {

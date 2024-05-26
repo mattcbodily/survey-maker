@@ -55,7 +55,7 @@ header p {
   font-size: var(--font-size-xlarge);
 }
 
-main {
+.app {
   padding: var(--spacing-medium);
 }
 

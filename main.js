@@ -1,3 +1,3 @@
 import { renderActivePage } from './router.js'
 
-renderActivePage()
+await renderActivePage()

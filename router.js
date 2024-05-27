@@ -8,41 +8,51 @@ export const globalState = {
   quiz: null,
 }
 
-function parseHashUrl() {
-  if (window.location.hash) {
-
-    let parsedHash = window.location.hash.replace('#/', '').split('/?')
-    
-    activePage = parsedHash[0]
-
-    const queryParams = parsedHash[1].split('&')
-    
-    queryParams.forEach(param => {
-      const splitParams = param.split('=')
-
-      globalState[splitParams[0]] = splitParams[1]
-    })
-  } else {
-    activePage = ''
-  }
-}
-
 window.addEventListener('popstate', (e) => {
   e.preventDefault()
-  console.log('hit')
-  renderActivePage()
+
+  renderActivePage(window.location.pathname)
 })
 
-export function renderActivePage() {
-  parseHashUrl()
+function attachHrefEventListeners() {
+  document.querySelectorAll('[href^="/"').forEach(element => {
+    element.addEventListener('click', event => {
+      event.preventDefault()
+  
+      const { href, pathname, search} = new URL(element.href)
+      
+      
+      window.history.pushState({ pathname }, '', href)
+  
+      renderActivePage(pathname, search)
+    })
+  })
+}
+
+export async function renderActivePage(pathname = '/', search = '') {
+  activePage = pathname.replaceAll('/', '')
+
+  const queryParams = search.replace('?', '').split('&')
+  
+  queryParams.forEach(param => {
+    const splitParams = param.split('=')
+
+    globalState[splitParams[0]] = splitParams[1]
+  })
 
   switch(activePage) {
     case '':
-      return displayQuizList(globalState)
+      await displayQuizList(globalState)
+
+      return attachHrefEventListeners()
     case 'take-quiz':
-      return displayTakeQuizPage(globalState)
+      await displayTakeQuizPage(globalState)
+
+      return attachHrefEventListeners()
     case 'quiz-results':
-      return displayQuizResultsPage(globalState)
+      displayQuizResultsPage(globalState)
+
+      return attachHrefEventListeners()
     default:
       return document.querySelector('.app').innerHTML = `
         <p>404 not found</p>

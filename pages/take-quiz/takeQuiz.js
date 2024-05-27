@@ -51,7 +51,9 @@ function renderQuizQuestion() {
 }
 
 function handleNextQuestion() {
-  if (activeQuestionIndex === selectedQuiz.questions.length - 1) return
+  if (activeQuestionIndex === selectedQuiz.questions.length - 1) {
+    submitQuiz()
+  }
 
   activeQuestionIndex++
   
@@ -93,7 +95,7 @@ function handlePreviousQuestion() {
 function submitQuiz() {
   localStorage.setItem('quizResults', JSON.stringify(userSelectedAnswers))
 
-  // window.location.pathname = `/quiz-results/?quiz=${quizId}`
+  window.location.pathname = `/quiz-results`
 }
 
 export function displayTakeQuizPage() {

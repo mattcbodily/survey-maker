@@ -1,3 +1,4 @@
+import { renderActivePage } from '../../router.js'
 import { sampleQuizData } from '../../sampleQuizData.js'
 
 export function displayQuizList() {
@@ -9,7 +10,7 @@ export function displayQuizList() {
           <div class="quiz-card">
             <h3 class="bold">${quiz.title}</h3>
             <p>${quiz.description}</p>
-            <a href="#/take-quiz">
+            <a href="#/take-quiz/?quiz=${quiz.id}">
               <button class="primary-button">Take quiz</button>
             </a>
           </div>

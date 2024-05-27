@@ -26,8 +26,6 @@ function handleAnswer(event) {
 }
 
 function renderQuizQuestion() {
-  console.log(activeQuestionIndex)
-
   const { questions } = selectedQuiz
   
   document.querySelector('.quiz-question').innerHTML = `
@@ -44,6 +42,12 @@ function renderQuizQuestion() {
       `
     }).join(' ')}
   `
+
+  const answerButtons = document.querySelectorAll('.answer-button')
+
+  for (let i = 0; i < answerButtons.length; i++) {
+    answerButtons[i].addEventListener('click', e => handleAnswer(e))
+  }
 }
 
 function handleNextQuestion() {
@@ -52,6 +56,10 @@ function handleNextQuestion() {
   activeQuestionIndex++
   
   renderQuizQuestion()
+
+  if (activeQuestionIndex > 0) {
+    document.getElementById('back-button').style.visibility = 'visible'
+  }
 
   if (activeQuestionIndex === selectedQuiz.questions.length - 1) {
     document.getElementById('next-button').innerHTML = `
@@ -85,40 +93,23 @@ function handlePreviousQuestion() {
 function submitQuiz() {
   localStorage.setItem('quizResults', JSON.stringify(userSelectedAnswers))
 
-  window.location.hash = `#/quiz-results/?quiz=${quizId}`
+  // window.location.pathname = `/quiz-results/?quiz=${quizId}`
 }
 
-function setupTakeQuizDisplay() {
-  setupQuestionDetails()
-  setupNavButtons()
-}
+export function displayTakeQuizPage() {
+  const params = new URLSearchParams(window.location.search)
+  const quizId = params.get('quiz')
 
-export function displayTakeQuizPage(passedState) {
-  selectedQuiz = sampleQuizData.find(quiz => quiz.id === parseInt(passedState.quiz))
+  selectedQuiz = sampleQuizData.find(quiz => quiz.id === parseInt(quizId)) 
+
   userSelectedAnswers = selectedQuiz.questions.map(question => ({
     answer: null,
     questionId: question.id,
   }))
 
-  const { questions } = selectedQuiz
-
-  const activeQuestion = questions[activeQuestionIndex]
-
   document.querySelector('.app').innerHTML = `
     <h2>Take quiz page</h2>
     <section class="quiz-question">
-      <p>Question ${activeQuestionIndex + 1} / ${questions.length}</p>
-      <h3>${activeQuestion.text}</h3>
-      ${activeQuestion.answers.map(answer => {
-        return `
-          <button 
-            class="answer-button ${answer.id === userSelectedAnswers[activeQuestionIndex].answer?.id ? 'answer-selected' : ''}"
-            data-answer-id="${answer.id}"
-          >
-            ${answer.text}
-          </button>
-        `
-      }).join(' ')}
     </section>
     <div class="nav-button-container">
       <button id="back-button" style="visibility: ${activeQuestionIndex === 0 ? 'hidden' : 'visible'}">
@@ -136,11 +127,7 @@ export function displayTakeQuizPage(passedState) {
     </div>
   `
 
-  const answerButtons = document.querySelectorAll('.answer-button')
-
-  for (let i = 0; i < answerButtons.length; i++) {
-    answerButtons[i].addEventListener('click', e => handleAnswer(e))
-  }
+  renderQuizQuestion()
 
   document.getElementById('next-button').addEventListener('click', e => handleNextQuestion(e))
   document.getElementById('back-button').addEventListener('click', e => handlePreviousQuestion(e))

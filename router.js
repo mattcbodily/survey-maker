@@ -4,10 +4,6 @@ import { displayTakeQuizPage } from './pages/take-quiz/takeQuiz'
 
 let activePage = ''
 
-export const globalState = {
-  quiz: null,
-}
-
 window.addEventListener('popstate', (e) => {
   e.preventDefault()
 
@@ -19,7 +15,7 @@ function attachHrefEventListeners() {
     element.addEventListener('click', event => {
       event.preventDefault()
   
-      const { href, pathname, search} = new URL(element.href)
+      const { href, pathname, search } = new URL(element.href)
       
       
       window.history.pushState({ pathname }, '', href)
@@ -29,28 +25,20 @@ function attachHrefEventListeners() {
   })
 }
 
-export async function renderActivePage(pathname = '/', search = '') {
+export async function renderActivePage(pathname = '/') {
   activePage = pathname.replaceAll('/', '')
-
-  const queryParams = search.replace('?', '').split('&')
-  
-  queryParams.forEach(param => {
-    const splitParams = param.split('=')
-
-    globalState[splitParams[0]] = splitParams[1]
-  })
 
   switch(activePage) {
     case '':
-      await displayQuizList(globalState)
+      await displayQuizList()
 
       return attachHrefEventListeners()
     case 'take-quiz':
-      await displayTakeQuizPage(globalState)
+      await displayTakeQuizPage()
 
       return attachHrefEventListeners()
     case 'quiz-results':
-      displayQuizResultsPage(globalState)
+      await displayQuizResultsPage()
 
       return attachHrefEventListeners()
     default:
@@ -58,4 +46,12 @@ export async function renderActivePage(pathname = '/', search = '') {
         <p>404 not found</p>
       `
   }
+}
+
+export function initializeRouter() {
+  renderActivePage()
+
+  window.addEventListener('DOMContentLoaded', () => {
+    renderActivePage(window.location.pathname)
+  })
 }

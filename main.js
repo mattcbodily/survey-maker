@@ -1,3 +1,3 @@
-import { renderActivePage } from './router.js'
+import { initializeRouter } from './router.js'
 
-await renderActivePage()
+initializeRouter()

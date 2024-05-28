@@ -13,12 +13,11 @@ function attachHrefEventListeners() {
     element.addEventListener('click', event => {
       event.preventDefault()
   
-      const { href, pathname, search } = new URL(element.href)
+      const url = new URL(element.href)
       
-      
-      window.history.pushState({ pathname }, '', href)
+      window.history.pushState({}, '', url)
   
-      renderActivePage(pathname, search)
+      renderActivePage(url.pathname)
     })
   })
 }

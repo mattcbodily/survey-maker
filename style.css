@@ -51,6 +51,10 @@ header {
   padding: 0 var(--spacing-medium);
 }
 
+header a {
+  color: var(--accent-text-color);
+}
+
 header p {
   font-size: var(--font-size-xlarge);
 }

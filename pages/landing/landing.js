@@ -1,4 +1,3 @@
-import { renderActivePage } from '../../router.js'
 import { sampleQuizData } from '../../sampleQuizData.js'
 
 export function displayQuizList() {

@@ -1,26 +1,31 @@
 import { sampleQuizData } from '../../sampleQuizData.js'
+import './take-quiz.css'
 
-const urlParams = new URLSearchParams(window.location.search)
-const quizId = urlParams.get('quiz')
+const params = new URLSearchParams(window.location.search)
+const quizId = params.get('quiz')
 
-const selectedQuiz = sampleQuizData.find(quiz => quiz.id === parseInt(quizId))
-let activeQuestion = 1
-
-const userSelectedAnswers = selectedQuiz.questions.map(question => ({
+let activeQuestionIndex = 0
+let selectedQuiz = sampleQuizData.find(quiz => quiz.id === parseInt(quizId)) 
+let userSelectedAnswers = selectedQuiz.questions.map(question => ({
   answer: null,
   questionId: question.id,
 }))
 
-const nextButton = document.createElement('button')
-const quizQuestionContainer = document.querySelector('.quiz-question')
+function handleAnswer(event, questionId) {
+  const answer = selectedQuiz.questions[activeQuestionIndex].answers[event.target.getAttribute('data-answer-id') - 1]
 
-function handleAnswer(answer) {
-  if (answer.id === userSelectedAnswers[activeQuestion - 1].answer?.id && userSelectedAnswers[activeQuestion - 1].questionId === activeQuestion) {
-    userSelectedAnswers[activeQuestion - 1].answer = null
-    nextButton.disabled = true
+  if (answer.id === userSelectedAnswers[activeQuestionIndex].answer?.id && userSelectedAnswers[questionId - 1].questionId === questionId - 1 + 1) {
+    userSelectedAnswers[activeQuestionIndex].answer = null
+
+    document.getElementById('next-button').disabled = true
   } else {
-    userSelectedAnswers[activeQuestion - 1].answer = answer
-    nextButton.disabled = false
+    userSelectedAnswers[activeQuestionIndex].answer = answer
+
+    if (activeQuestionIndex === selectedQuiz.questions.length - 1) {
+      document.getElementById('submit-button').disabled = false
+    } else {
+      document.getElementById('next-button').disabled = false
+    }
   }
 
   const answerButtons = document.getElementsByClassName('answer-button')
@@ -34,118 +39,91 @@ function handleAnswer(answer) {
   }
 }
 
-function submitQuiz() {
-  // TODO: Build this out in the next branch
-}
-
-function setupAnswerButtons(activeQuestionDetails) {
-  activeQuestionDetails.answers.forEach((answer) => {
-    const answerButton = document.createElement('button')
-
-    answerButton.className = 'answer-button'
-
-    answerButton.innerText = answer.text
-
-    if (answer.id === userSelectedAnswers[activeQuestion - 1].answer?.id) {
-      answerButton.classList.add('answer-selected')
-    }
-
-    answerButton.addEventListener('click', () => {
-      handleAnswer(answer, activeQuestionDetails)
-    })
-
-    quizQuestionContainer.appendChild(answerButton)
-  })
-}
-
-function setupNavButtons() {
-  const navButtonContainer = document.querySelector('.nav-button-container')
-
-  const previousButton = document.createElement('button')
-
-  previousButton.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="22" height="22" stroke-width="1.5" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-    </svg>
-    <span>Back<span>
-  `
-  previousButton.style.visibility = 'hidden'
-
-  previousButton.addEventListener('click', () => {
-    activeQuestion--
-
-    if (activeQuestion === 1) {
-      previousButton.style.visibility = 'hidden'
-    }
-
-    if (nextButton.innerText === 'Submit') {
-      nextButton.innerHTML = `
-        <span>Next</span>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="22" height="22" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-        </svg>
+function renderQuizQuestion() {
+  const { questions } = selectedQuiz
+  
+  document.querySelector('.quiz-question').innerHTML = `
+    <p>Question ${activeQuestionIndex + 1} / ${selectedQuiz.questions.length}</p>
+    <h3>${questions[activeQuestionIndex].text}</h3>
+    ${questions[activeQuestionIndex].answers.map(answer => {
+      return `
+        <button 
+          class="answer-button ${answer.id === userSelectedAnswers[activeQuestionIndex].answer?.id ? 'answer-selected' : ''}"
+          data-answer-id="${answer.id}"
+        >
+          ${answer.text}
+        </button>
       `
-    }
-
-    setupQuestionDetails()
-  })
-
-  navButtonContainer.appendChild(previousButton)
-
-  nextButton.innerHTML = `
-    <span>Next</span>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="22" height="22" stroke-width="1.5" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-    </svg>
+    }).join(' ')}
   `
 
-  nextButton.addEventListener('click', () => {
-    if (activeQuestion === selectedQuiz.questions.length) {
-      submitQuiz()
-    } else {
-      activeQuestion++
+  const answerButtons = document.querySelectorAll('.answer-button')
 
-      if (activeQuestion > 1) {
-        previousButton.style.visibility = 'visible'
-      }
+  for (let i = 0; i < answerButtons.length; i++) {
+    answerButtons[i].addEventListener('click', e => handleAnswer(e))
+  }
+}
 
-      if (activeQuestion === selectedQuiz.questions.length) {
-        nextButton.innerHTML = `
+function renderNavButtonContainer() {
+  document.querySelector('.nav-button-container').innerHTML = `
+    <button id="back-button" style="visibility: ${activeQuestionIndex === 0 ? 'hidden' : 'visible'};">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="22" height="22" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+      </svg>
+      <span>Back</span>
+    </button>
+    ${activeQuestionIndex === selectedQuiz.questions.length - 1
+      ? `
+        <button id="submit-button" disabled>
           <span>Submit</span>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="22" height="22" stroke-width="1.5" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-          </svg>    
-        `
-      }
-
-      setupQuestionDetails()
+          </svg> 
+        </button>
+      `
+      : `
+        <button id="next-button" ${!userSelectedAnswers[activeQuestionIndex].answer ? 'disabled' : ''}>
+          <span>Next</span>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="22" height="22" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </button>
+      `
     }
-  })
-
-  navButtonContainer.appendChild(nextButton)
-}
-
-function setupQuestionDetails() {
-  const quizQuestions = selectedQuiz.questions
-  const activeQuestionDetails = quizQuestions.find(question => question.id === activeQuestion)
-    
-  nextButton.disabled = userSelectedAnswers[activeQuestion - 1].answer?.id ? false : true
-
-  quizQuestionContainer.innerHTML = `
-    <p>Question ${activeQuestion} / ${selectedQuiz.questions.length}</p>
-    <h3>${activeQuestionDetails.text}</h3>
   `
 
-  setupAnswerButtons(activeQuestionDetails)
+  if (activeQuestionIndex === selectedQuiz.questions.length - 1) {
+    document.getElementById('submit-button').addEventListener('click', () => submitQuiz())
+  } else {
+    document.getElementById('next-button').addEventListener('click', () => handleNavButtonClick('next'))
+  }
+
+  document.getElementById('back-button').addEventListener('click', () => handleNavButtonClick('previous'))
 }
 
-function setupTakeQuizDisplay() {
-  const takeQuizTitle = document.querySelector('.quiz-title')
-
-  takeQuizTitle.innerText = selectedQuiz.title
-
-  setupQuestionDetails()
-  setupNavButtons()
+function handleNavButtonClick(direction) {
+  direction === 'next' ? activeQuestionIndex++ : activeQuestionIndex--
+  
+  renderQuizQuestion()
+  renderNavButtonContainer()
 }
 
-setupTakeQuizDisplay()
+function submitQuiz() {
+  localStorage.setItem('quizResults', JSON.stringify(userSelectedAnswers))
+
+  window.location.pathname = `/quiz-results`
+}
+
+export function displayTakeQuizPage() {
+  document.querySelector('.app').innerHTML = `
+    <h2>Take quiz page</h2>
+    <section class="quiz-question">
+    </section>
+    <div class="nav-button-container">
+    </div>
+  `
+
+  renderQuizQuestion()
+  renderNavButtonContainer()
+}
+

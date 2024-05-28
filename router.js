@@ -1,6 +1,4 @@
 import { displayQuizList } from './pages/landing/landing'
-import { displayQuizResultsPage } from './pages/quiz-results/quizResults'
-import { displayTakeQuizPage } from './pages/take-quiz/takeQuiz'
 
 let activePage = ''
 
@@ -31,16 +29,18 @@ export async function renderActivePage(pathname = '/') {
   switch(activePage) {
     case '':
       await displayQuizList()
-
-      return attachHrefEventListeners()
+      attachHrefEventListeners()
+      break;
     case 'take-quiz':
-      await displayTakeQuizPage()
-
-      return attachHrefEventListeners()
+      const takeQuizModule = await import('./pages/take-quiz/takeQuiz')
+      takeQuizModule.displayTakeQuizPage()
+      attachHrefEventListeners()
+      break;
     case 'quiz-results':
-      await displayQuizResultsPage()
-
-      return attachHrefEventListeners()
+      const quizResultsModule = await import('./pages/quiz-results/quizResults')
+      quizResultsModule.displayQuizResultsPage()
+      attachHrefEventListeners()
+      break;
     default:
       return document.querySelector('.app').innerHTML = `
         <p>404 not found</p>

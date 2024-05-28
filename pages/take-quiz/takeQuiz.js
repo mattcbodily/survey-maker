@@ -1,17 +1,27 @@
 import { sampleQuizData } from '../../sampleQuizData.js'
 import './take-quiz.css'
 
+const params = new URLSearchParams(window.location.search)
+const quizId = params.get('quiz')
+
 let activeQuestionIndex = 0
-let selectedQuiz = null
-let userSelectedAnswers = null
+let selectedQuiz = sampleQuizData.find(quiz => quiz.id === parseInt(quizId)) 
+let userSelectedAnswers = selectedQuiz.questions.map(question => ({
+  answer: null,
+  questionId: question.id,
+}))
 
 function handleAnswer(event) {
   const answer = selectedQuiz.questions[activeQuestionIndex].answers[event.target.getAttribute('data-answer-id') - 1]
 
   if (answer.id === userSelectedAnswers[activeQuestionIndex].answer?.id && userSelectedAnswers[activeQuestionIndex].questionId === activeQuestionIndex) {
     userSelectedAnswers[activeQuestionIndex].answer = null
+
+    document.getElementById('next-button').disabled = true
   } else {
     userSelectedAnswers[activeQuestionIndex].answer = answer
+
+    document.getElementById('next-button').disabled = false
   }
 
   const answerButtons = document.getElementsByClassName('answer-button')
@@ -56,6 +66,10 @@ function handleNextQuestion() {
   }
 
   activeQuestionIndex++
+
+  if(!userSelectedAnswers[activeQuestionIndex].answer) {
+    document.getElementById('next-button').disabled = true
+  }
   
   renderQuizQuestion()
 
@@ -80,6 +94,10 @@ function handlePreviousQuestion() {
     document.getElementById('back-button').style.visibility = 'hidden'
   }
 
+  if(userSelectedAnswers[activeQuestionIndex].answer) {
+    document.getElementById('next-button').disabled = false
+  }
+
   renderQuizQuestion()
 
   if (activeQuestionIndex === selectedQuiz.questions.length - 1) {
@@ -99,16 +117,6 @@ function submitQuiz() {
 }
 
 export function displayTakeQuizPage() {
-  const params = new URLSearchParams(window.location.search)
-  const quizId = params.get('quiz')
-
-  selectedQuiz = sampleQuizData.find(quiz => quiz.id === parseInt(quizId)) 
-
-  userSelectedAnswers = selectedQuiz.questions.map(question => ({
-    answer: null,
-    questionId: question.id,
-  }))
-
   document.querySelector('.app').innerHTML = `
     <h2>Take quiz page</h2>
     <section class="quiz-question">
@@ -120,7 +128,7 @@ export function displayTakeQuizPage() {
         </svg>
         <span>Back</span>
       </button>
-      <button id="next-button">
+      <button id="next-button" disabled>
         <span>Next</span>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="22" height="22" stroke-width="1.5" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />

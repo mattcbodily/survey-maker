@@ -1,4 +1,4 @@
-import { displayQuizList } from './pages/landing/landing'
+import { displayLandingPage } from './pages/landing/landing'
 
 let activePage = ''
 
@@ -27,17 +27,22 @@ export async function renderActivePage(pathname = '/') {
 
   switch(activePage) {
     case '':
-      await displayQuizList()
+      await displayLandingPage()
       attachHrefEventListeners()
       break;
-    case 'take-quiz':
-      const takeQuizModule = await import('./pages/take-quiz/takeQuiz')
-      takeQuizModule.displayTakeQuizPage()
+    case 'quizzes':
+      const quizzesModule = await import('./pages/quizzes/quizzes')
+      quizzesModule.displayQuizList()
       attachHrefEventListeners()
       break;
     case 'quiz-results':
       const quizResultsModule = await import('./pages/quiz-results/quizResults')
       quizResultsModule.displayQuizResultsPage()
+      attachHrefEventListeners()
+      break;
+    case 'take-quiz':
+      const takeQuizModule = await import('./pages/take-quiz/takeQuiz')
+      takeQuizModule.displayTakeQuizPage()
       attachHrefEventListeners()
       break;
     default:

@@ -1,21 +1,30 @@
-import { sampleQuizData } from '../../sampleQuizData.js'
+import { collection, getDocs } from 'firebase/firestore'
 
-export function displayQuizList() {
+import { db } from '../../firebase.js'
+
+const querySnapshot = await getDocs(collection(db, 'quizzes'))
+
+export async function displayQuizList() {
   document.querySelector('.app').innerHTML = `
     <h2 style="margin-bottom: 16px;">Recent quizzes</h2>
-    <div class="quiz-list">
-      ${sampleQuizData.map(quiz => {
-        return `
-          <div class="quiz-card">
-            <h3 class="bold">${quiz.title}</h3>
-            <p>${quiz.description}</p>
-            <a href="/take-quiz/?quiz=${quiz.id}">
-              <button class="primary-button">Take quiz</button>
-            </a>
-          </div>
-        `
-      }
-      )}
-    </div>
+    <div class="quiz-list"></div>
   `
+  
+  const quizListElement = document.querySelector('.quiz-list')
+  
+  querySnapshot.forEach((doc) => {
+    const quizCardElement = document.createElement('div')
+
+    quizCardElement.className = 'quiz-card'
+
+    quizCardElement.innerHTML = `
+      <h3 class="bold">${doc.data().title}</h3>
+      <p>${doc.data().description}</p>
+      <a href="/pages/take-quiz/?quiz=${doc.data().id}">
+        <button class="primary-button">Take quiz</button>
+      </a>
+    `
+
+    quizListElement.appendChild(quizCardElement)
+  })
 }

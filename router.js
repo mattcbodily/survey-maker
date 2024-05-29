@@ -48,7 +48,7 @@ export async function renderActivePage(pathname = '/') {
 }
 
 export function initializeRouter() {
-  renderActivePage()
+  renderActivePage(window.location.pathname)
 
   window.addEventListener('DOMContentLoaded', () => {
     renderActivePage(window.location.pathname)

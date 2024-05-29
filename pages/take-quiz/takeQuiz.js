@@ -1,27 +1,37 @@
-import { sampleQuizData } from '../../sampleQuizData.js'
+import { collection, query, where, getDocs } from 'firebase/firestore'
+import { db } from '../../firebase.js'
 import './take-quiz.css'
 
 const params = new URLSearchParams(window.location.search)
 const quizId = params.get('quiz')
+const questions = []
+
+const q = query(collection(db, 'quiz-questions'), where('quizId', '==', quizId));
+
+const querySnapshot = await getDocs(q)
+
+querySnapshot.forEach((doc) => {
+  questions.push({ questionId: doc.id, ...doc.data() })
+})
 
 let activeQuestionIndex = 0
-let selectedQuiz = sampleQuizData.find(quiz => quiz.id === parseInt(quizId)) 
-let userSelectedAnswers = selectedQuiz.questions.map(question => ({
+let userSelectedAnswers = questions.map(question => ({
   answer: null,
-  questionId: question.id,
+  questionId: question.questionId,
 }))
 
-function handleAnswer(event, questionId) {
-  const answer = selectedQuiz.questions[activeQuestionIndex].answers[event.target.getAttribute('data-answer-id') - 1]
+function handleAnswer(event) {
+  const answer = questions[activeQuestionIndex].answers.find(el => el.answerId === event.target.getAttribute('data-answer-id'))
+  const answerId = event.target.getAttribute('data-answer-id')
 
-  if (answer.id === userSelectedAnswers[activeQuestionIndex].answer?.id && userSelectedAnswers[questionId - 1].questionId === questionId - 1 + 1) {
+  if (answerId === userSelectedAnswers[activeQuestionIndex].answer?.id && userSelectedAnswers[activeQuestionIndex].questionId === activeQuestionIndex + 1) {
     userSelectedAnswers[activeQuestionIndex].answer = null
 
     document.getElementById('next-button').disabled = true
   } else {
     userSelectedAnswers[activeQuestionIndex].answer = answer
 
-    if (activeQuestionIndex === selectedQuiz.questions.length - 1) {
+    if (activeQuestionIndex === questions.length - 1) {
       document.getElementById('submit-button').disabled = false
     } else {
       document.getElementById('next-button').disabled = false
@@ -31,7 +41,7 @@ function handleAnswer(event, questionId) {
   const answerButtons = document.getElementsByClassName('answer-button')
 
   for (let i = 0; i < answerButtons.length; i++) {
-    if (answer.id === i + 1 && !answerButtons[i].classList.contains('answer-selected')) {
+    if (answerId === answerButtons[i].getAttribute('data-answer-id') && !answerButtons[i].classList.contains('answer-selected')) {
       answerButtons[i].classList.add('answer-selected')
     } else if (answerButtons[i].classList.contains('answer-selected')) {
       answerButtons[i].classList.remove('answer-selected')
@@ -40,16 +50,14 @@ function handleAnswer(event, questionId) {
 }
 
 function renderQuizQuestion() {
-  const { questions } = selectedQuiz
-  
   document.querySelector('.quiz-question').innerHTML = `
-    <p>Question ${activeQuestionIndex + 1} / ${selectedQuiz.questions.length}</p>
-    <h3>${questions[activeQuestionIndex].text}</h3>
+    <p>Question ${activeQuestionIndex + 1} / ${questions.length}</p>
+    <h3>${questions[activeQuestionIndex].prompt}</h3>
     ${questions[activeQuestionIndex].answers.map(answer => {
       return `
         <button 
-          class="answer-button ${answer.id === userSelectedAnswers[activeQuestionIndex].answer?.id ? 'answer-selected' : ''}"
-          data-answer-id="${answer.id}"
+          class="answer-button ${answer.answerId === userSelectedAnswers[activeQuestionIndex].answer?.answerId ? 'answer-selected' : ''}"
+          data-answer-id="${answer.answerId}"
         >
           ${answer.text}
         </button>
@@ -72,7 +80,7 @@ function renderNavButtonContainer() {
       </svg>
       <span>Back</span>
     </button>
-    ${activeQuestionIndex === selectedQuiz.questions.length - 1
+    ${activeQuestionIndex === questions.length - 1
       ? `
         <button id="submit-button" disabled>
           <span>Submit</span>
@@ -92,7 +100,7 @@ function renderNavButtonContainer() {
     }
   `
 
-  if (activeQuestionIndex === selectedQuiz.questions.length - 1) {
+  if (activeQuestionIndex === questions.length - 1) {
     document.getElementById('submit-button').addEventListener('click', () => submitQuiz())
   } else {
     document.getElementById('next-button').addEventListener('click', () => handleNavButtonClick('next'))
@@ -111,7 +119,7 @@ function handleNavButtonClick(direction) {
 function submitQuiz() {
   localStorage.setItem('quizResults', JSON.stringify(userSelectedAnswers))
 
-  window.location.pathname = `/quiz-results`
+  window.location.pathname = '/quiz-results'
 }
 
 export function displayTakeQuizPage() {

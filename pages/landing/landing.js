@@ -20,7 +20,7 @@ export async function displayQuizList() {
     quizCardElement.innerHTML = `
       <h3 class="bold">${doc.data().title}</h3>
       <p>${doc.data().description}</p>
-      <a href="/pages/take-quiz/?quiz=${doc.data().id}">
+      <a href="/take-quiz/?quiz=${doc.id}">
         <button class="primary-button">Take quiz</button>
       </a>
     `
